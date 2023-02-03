@@ -44,7 +44,7 @@ ipcMain.on('command', async function (event, data) {
             break;
 
         case 'getTemplate':
-            result = await getTemplate(result);
+            result = await getTemplate(appName, data.fileName);
             break;
 
         case 'readFile':
@@ -68,14 +68,13 @@ ipcMain.on('command', async function (event, data) {
         event.sender.send('command', { __id: data.__id, error: e.message });
     }
 
-    async function getTemplate(result) {
-        const fileName = await io.getPath(appName, 'templates', data.fileName);
+    async function getTemplate(appName, file) {
+        const fileName = await io.resolvePath(appName, 'templates', file);
         try {
-            result = await io.readFile(fileName);
+            return  await io.readFile(fileName);
         } catch (e) {
-            throw new Error('Error listing folder: templates', fileName);
+            throw new Error('Error reading template', fileName);
         }
-        return result;
     }
 
     async function getConnection(result) {

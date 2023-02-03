@@ -55,12 +55,31 @@ async function readFile(fileName) {
     }
 }
 
-async function listFiles(appName, folder) {
-    folder = path.join(getAppDataPath(appName), folder)
-    if(!fs.existsSync(folder)) {
-        fs.mkdirSync(folder, { recursive: true });
+async function resolvePath(appName, folder, file=null) {
+    console.log('Resolved path', appName, folder, file)
+    let resolvedPath = path.join(getAppDataPath(appName), folder)
+    console.info(folder, 'folder', resolvedPath)
+    if(fs.existsSync(resolvedPath)) {
+        return file ? path.join( resolvedPath, file) : resolvedPath;
     }
-    return fs.readdirSync(folder);
+
+    resolvedPath = path.join(process.cwd(), folder)
+    console.info(folder, 'folder', resolvedPath)
+    if(fs.existsSync(resolvedPath)) {
+        return file ? path.join( resolvedPath, file) : resolvedPath;
+    }
+}
+
+
+async function listFiles(appName, folder) {
+    
+    let templatesPath = await resolvePath(appName, folder);
+
+    if(fs.existsSync(templatesPath)) {
+        return fs.readdirSync(templatesPath);
+    }
+
+    return ['could not find templates folder'];
 }
 
 export default {
@@ -68,5 +87,6 @@ export default {
     getPath,
     saveFile,
     readFile,
-    listFiles
+    listFiles,
+    resolvePath
 }
