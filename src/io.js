@@ -5,22 +5,22 @@ function getAppDataPath(appName) {
     let dataPath;
 
     switch (process.platform) {
-        case "darwin":
-            dataPath = path.join(process.env.HOME, "Library", "Application Support", appName);
-            break;
+    case "darwin":
+        dataPath = path.join(process.env.HOME, "Library", "Application Support", appName);
+        break;
 
-        case "win32":
-            dataPath = path.join(process.env.APPDATA, appName);
-            break;
+    case "win32":
+        dataPath = path.join(process.env.APPDATA, appName);
+        break;
 
-        case "linux":
-            dataPath = path.join(process.env.HOME, '.config', appName);
-            break;
+    case "linux":
+        dataPath = path.join(process.env.HOME, '.config', appName);
+        break;
 
-        default: 
-            console.log("Unsupported platform! " + process.platform);
-            process.exit(1);
-            break;
+    default: 
+        console.log("Unsupported platform! " + process.platform);
+        process.exit(1);
+        break;
     }
 
     // make sure the folder exists
