@@ -71,6 +71,7 @@ export default {
         async connect() {
 
             this.$store.commit('app/clearError');
+            this.$store.commit('app/loading', true);
             // Connect to the database using the collected details
             const connectionDetails = {
                 host: this.host,
@@ -83,7 +84,7 @@ export default {
             console.log(`Connecting to the database at ${connectionDetails.host}:${connectionDetails.port} with username ${connectionDetails.username}`);
 
             this.$store.commit('source/name', this.name)
-            this.$store.commit('source/type', 'mysql')
+            this.$store.commit('source/source', 'mysql')
             this.$store.commit('source/options', connectionDetails)
 
             try{
@@ -92,6 +93,8 @@ export default {
             } catch(e){
                 this.$store.commit('app/error', e);
                 this.connected = false
+            } finally {
+                this.$store.commit('app/loading', false);
             }
         },
     },

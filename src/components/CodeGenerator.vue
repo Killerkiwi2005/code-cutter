@@ -1,12 +1,14 @@
 <template>
-
-  <div class="grid">
-
-    <div>
+<div>
     <div v-if="error" class="notification is-danger">
         <button class="delete" @click="clearError"></button>
         {{ error }}
     </div>
+
+  <div class="grid">
+
+    <div>
+
 
     <div>
         <div class="m-2">
@@ -34,6 +36,7 @@
         <label class="label">Table / Object</label>
         <div class="control">
             <select class="input" v-model="table">
+                <option value="" selected class="hidden">select an object</option>
         <option v-for="table in tables" v-bind:key="table" :value="table">{{table}}</option>
       </select>
         </div>
@@ -46,6 +49,7 @@
         <label class="label">Templates</label>
         <div class="control">
             <select class="input" @change="loadTemplate($event.target.value)" >
+                <option value="" selected  class="hidden">select a template</option>
 <option v-for="template in templates" v-bind:key="template" :value="template">{{template}}</option>
 </select>
         </div>
@@ -111,7 +115,7 @@
     
     </div>
   </div>
-
+</div>
 </template>
 
 <script>
@@ -148,34 +152,39 @@ export default {
     methods: {
         async ai(){
 
-            let columns = await this.$store.dispatch('source/getColumns', this.table);
+            this.$store.commit('app/loading', true);
+            try{
+                let columns = await this.$store.dispatch('source/getColumns', this.table);
 
-            columns.name = this.table
+                columns.name = this.table
 
-            // save the connection
-            let code = await ipc.call({
-                command: 'compile',
-                template: this.template,
-                data: {
-                    name: this.table,
-                    columns
-                }
-            })
+                // save the connection
+                let code = await ipc.call({
+                    command: 'compile',
+                    template: this.template,
+                    data: {
+                        name: this.table,
+                        columns
+                    }
+                })
 
-            this.result = 'asking open ai...\n\n' + code;
+                this.result = 'asking open ai...\n\n' + code;
 
-            const { Configuration, OpenAIApi } = require("openai");
-            const configuration = new Configuration({
-                apiKey: this.apiKey,
-            });
-            const openai = new OpenAIApi(configuration);
-            const response = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: code ,
-                temperature: 0,
-                max_tokens: 1000,
-            });
-            this.result = highlight.highlightAuto(response.data.choices[0].text).value;
+                const { Configuration, OpenAIApi } = require("openai");
+                const configuration = new Configuration({
+                    apiKey: this.apiKey,
+                });
+                const openai = new OpenAIApi(configuration);
+                const response = await openai.createCompletion({
+                    model: "text-davinci-003",
+                    prompt: code ,
+                    temperature: 0,
+                    max_tokens: 1000,
+                });
+                this.result = highlight.highlightAuto(response.data.choices[0].text).value;
+            }finally{
+                this.$store.commit('app/loading', false);
+            }
         },
 
         async generate(){
@@ -275,4 +284,9 @@ textarea.template{
     right: 10px;
     top: 10px;
 }
+
+.hidden{
+    display:none
+}
+
 </style>
