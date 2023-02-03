@@ -15,7 +15,7 @@ class {{pascalCase name}} extends Model
 {
     protected $casts = [
 {{#each columns}}
-	'{{snakeCase name}}' => '{{dataType}}',
+	'{{snakeCase name}}' => '{{phpDataType dataType nullable}}',
 {{/each}}
     ];
     
