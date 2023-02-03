@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  debug:
+    image: thecodingmachine/php:8.0-v4-cli-node16
+    volumes:
+      - ./:/usr/src/app/
+    environment:
+      PHP_EXTENSION_XDEBUG: 1
+      PHP_EXTENSION_INTL: 1
+      PHP_EXTENSION_GD: 1
+      PHP_EXTENSION_REDIS: 1
+      PHP_INI_MAX_EXECUTION_TIME: 600
+      PHP_INI_UPLOAD_MAX_FILESIZE: "1280m"
+      PHP_INI_XDEBUG__MODE: "debug" #"debug,develop,trace,profile"
+      PHP_INI_XDEBUG__OUTPUT_DIR: "/tmp/docker-xdebug"
+      PHP_IDE_CONFIG: "serverName=docker"
+      PHP_IDE_ERROR_LOG: "/var/www/logs/php.log"
+    expose:
+      - 9000
+      - 9003
+
+  database:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    tmpfs:
+      - /var/lib/mysql
+    volumes:
+      - ./tests/seed/database:/docker-entrypoint-initdb.d/:ro
+    expose:
+      # Opens port 3306 on the container
+      - '3306'

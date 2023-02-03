@@ -1,0 +1,6 @@
+/* laraval model {{name}}  with the fields 
+    {{#each columns}}
+	{{phpDataType dataType nullable}} {{name}}{{#unless @last}},{{/unless}}
+    {{/each}}
+    add phpdoc
+*/
