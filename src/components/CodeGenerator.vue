@@ -1,7 +1,7 @@
 <template>
 <div>
-    <div v-if="error" class="notification is-danger">
-        <button class="delete" @click="clearError"></button>
+    <div v-if="error" class="notification is-danger sticky" @click="clearError">
+        <button class="delete"></button>
         {{ error }}
     </div>
 
@@ -54,9 +54,6 @@
 </select>
         </div>
       </div>
-      
- 
-
       <div class="field">
         <label class="label">Template</label>
         <div class="control">
@@ -154,6 +151,7 @@ export default {
         async ai(){
 
             this.$store.commit('app/loading', true);
+            this.$store.commit('app/clearError');
             try{
                 let columns = await this.$store.dispatch('source/getColumns', this.table);
 
@@ -183,28 +181,34 @@ export default {
                     max_tokens: 1000,
                 });
                 this.result = highlight.highlightAuto(response.data.choices[0].text).value;
+            }catch(e){
+                this.$store.commit('app/error', e);
             }finally{
                 this.$store.commit('app/loading', false);
             }
         },
 
         async generate(){
+            this.$store.commit('app/clearError');
+            try{
+                let columns = await this.$store.dispatch('source/getColumns', this.table);
 
-            let columns = await this.$store.dispatch('source/getColumns', this.table);
+                columns.name = this.table
 
-            columns.name = this.table
+                // save the connection
+                this.code = await ipc.call({
+                    command: 'compile',
+                    template: this.template,
+                    data: {
+                        name: this.table,
+                        columns
+                    }
+                })
 
-            // save the connection
-            this.code = await ipc.call({
-                command: 'compile',
-                template: this.template,
-                data: {
-                    name: this.table,
-                    columns
-                }
-            })
-
-            this.result = highlight.highlightAuto(this.code).value
+                this.result = highlight.highlightAuto(this.code).value
+            }catch(e){
+                this.$store.commit('app/error', e);
+            }
         },
         clearError(){
             this.$store.commit('app/clearError');
@@ -288,6 +292,12 @@ textarea.template{
 
 .hidden{
     display:none
+}
+
+.notification.sticky{
+    position: fixed;
+    z-index:1000;
+    width: 100%;
 }
 
 </style>
