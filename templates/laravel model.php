@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\\{{pascalCase name}}
  *
 {{#each columns}}
- * @property {{dataType}} ${{snakeCase name}}
+ * @property {{phpDataType dataType nullable}} ${{snakeCase name}}
 {{/each}}
  */
 class {{pascalCase name}} extends Model

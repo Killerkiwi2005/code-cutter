@@ -1,7 +1,7 @@
 
 // map datatypes to php datatypes
 function map(dataType, nullable) {
-    switch (dataType.toLowerCase()) {
+    switch ((dataType || '').toLowerCase()) {
     case 'int':
     case 'tinyint':
     case 'smallint':
