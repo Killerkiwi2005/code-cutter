@@ -25,5 +25,3 @@ class {{pascalCase name}} extends Model
 {{/each}}
     ];
 }
-
-

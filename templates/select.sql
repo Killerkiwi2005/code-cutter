@@ -1,9 +1,5 @@
-UPDATE {{name}}
-SET
+SELECT 
 {{#each columns}}
-	{{name}}{{#unless @last}} = ?,{{/unless}}
+	{{name}}{{#unless @last}},{{/unless}}
 {{/each}}
-WHERE
-	id = ?
-	
-
+FROM {{name}}
