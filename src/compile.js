@@ -1,7 +1,6 @@
-
 import handlebars from 'handlebars'
 import phpMapping from './generator/mapping/php'
-
+import cSharpMapping from './generator/mapping/csharp'
 
 import {
     camelCase,
@@ -16,8 +15,6 @@ import {
     sentenceCase,
     snakeCase,
 } from "change-case";
-
-
 
 handlebars.registerHelper('braces', function(text) {
     let result = '{{' + text + '}}';
@@ -58,6 +55,9 @@ handlebars.registerHelper('snakeCase', function(text) {
 });
 handlebars.registerHelper('phpDataType', function(text, nullable) {
     return new handlebars.SafeString(phpMapping.map(text, nullable));
+});
+handlebars.registerHelper('csharpDataType', function(text, nullable) {
+    return new handlebars.SafeString(cSharpMapping.map(text, nullable));
 });
 
 function compile(template, data){

@@ -81,6 +81,7 @@
             <div class="column mb-0 pb-0">    
                 <button class="button mb-0 " @click.prevent="insertTextAtCaret('{{dataType}}')">DataType</button> 
                 <button class="button mb-0 " @click.prevent="insertTextAtCaret('{{phpDataType dataType nullable}}')">PHP DataType</button> 
+                <button class="button mb-0 " @click.prevent="insertTextAtCaret('{{csharpDataType dataType nullable}}')">C# DataType</button> 
             </div>  
             <div class="column mb-0 pb-0">
                 <button class="button mb-0 " @click.prevent="insertTextAtCaret('{{#each columns}}\n\n{{/each}}')">Loop</button> 
